@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">ListIt</string>
+    <string name="action_settings">settings</string>
+    <string name="ListIT">appname</string>
+    <string name="appname">ListIT</string>
+    <string name="enter_item">Enter Todo Item:</string>
+    <string name="Priority">Priority:</string>
+    <string name="low">Low</string>
+    <string name="medium">Medium</string>
+    <string name="high">High</string>
+    <string name="deadline">Finish by:</string>
+    <string name="tick">tick</string>
+    <string name="cancel">cancel</string>
+    <string name="comments">Comments:</string>
+    <string name="completed">Competed:</string>
+    <string name="done">done</string>
+    <string name="notdone">Still pending</string>
+    <string name="status">Status:</string>
+    <string name="submit">SUBMIT</string>
+    <string name="edititem">Edit Item</string>
+    <string name="additem">Add Item</string>
+    <string name="emptyitem">Error while saving item</string>
+    <string name="itemsaved">Item saved</string>
+    <string name="intro">Click \'+\' to add new item</string>
+</resources>
