@@ -18,17 +18,17 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.badhri.listit.R;
 
-import java.util.Calendar;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 /**
  * Created by badhri on 9/22/16.
  */
 public class EditItemActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
     private int position;
+    private long dbid;
     private EditText itemText;
     private RadioGroup radioPriorityGroup;
     private RadioGroup radioStatusGroup;
@@ -55,9 +55,13 @@ public class EditItemActivity extends AppCompatActivity implements DatePickerDia
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(MotionEvent.ACTION_UP == event.getAction()) {
-
+                    EditText selected = (EditText) v;
+                    Bundle selectedDate = new Bundle();
+                    //if (!selected.getText().toString().isEmpty()) {
+                    selectedDate.putString("selectedDate", selected.getText().toString());
+                    //}
                     newFragment = new DatePickerFragment();
-
+                    newFragment.setArguments(selectedDate);
                     newFragment.show(getFragmentManager(), "datePicker");
 
                 }
@@ -72,6 +76,8 @@ public class EditItemActivity extends AppCompatActivity implements DatePickerDia
             title.setText(R.string.edititem);
             position = getIntent().getIntExtra("Position", 0);
             itemText.setText(item);
+            dbid = getIntent().getLongExtra("Id", 0);
+            Log.i("ListIt", "receive 1 id:" + dbid);
             String priority = getIntent().getStringExtra("Priority");
             if (priority != null) {
                 if (priority.contentEquals("Low")) {
@@ -134,7 +140,6 @@ public class EditItemActivity extends AppCompatActivity implements DatePickerDia
         if (id == R.id.action_save) {
             String text = itemText.getText().toString();
             if (text.isEmpty()) {
-                Toast.makeText(getApplicationContext(), R.string.emptyitem, Toast.LENGTH_LONG);
                 setResult(RESULT_CANCELED);
                 this.finish();
                 return true;
@@ -143,6 +148,8 @@ public class EditItemActivity extends AppCompatActivity implements DatePickerDia
             Intent data = new Intent();
             data.putExtra("Item", text);
             data.putExtra("Position", position);
+            data.putExtra("Id", dbid);
+            Log.i("ListIt", "send 1 id:" + dbid);
             data.putExtra("Comments", commentText.getText().toString());
             data.putExtra("Deadline", deadLineText.getText().toString());
             int selectedId = radioPriorityGroup.getCheckedRadioButtonId();
@@ -163,10 +170,21 @@ public class EditItemActivity extends AppCompatActivity implements DatePickerDia
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
+            int year, month, day;
+            String date = this.getArguments().getString("selectedDate");
+            Log.i("ListIt", "date:" + date);
+            if (date != null && date.isEmpty()) {
+                final Calendar c = Calendar.getInstance();
+                year = c.get(Calendar.YEAR);
+                month = c.get(Calendar.MONTH);
+                day = c.get(Calendar.DAY_OF_MONTH);
+            } else {
+                String[] parts = date.split("-");
+                year = Integer.parseInt(parts[0]);
+                month = Integer.parseInt(parts[1]) - 1;
+                day = Integer.parseInt(parts[2]);
+            }
+            Log.i("ListIt", year + ":" + month + ":" + day);
             return new DatePickerDialog(getActivity(), (EditItemActivity)getActivity(), year, month, day);
         }
 

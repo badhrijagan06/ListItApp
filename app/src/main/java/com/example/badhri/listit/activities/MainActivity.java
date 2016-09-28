@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(myToolbar);
         setTitle("");
-
         populateArrayItems();
         lvitems = (ListView) findViewById(R.id.lvitems);
         //lvitems.setBackgroundColor(Color.parseColor("#80CBC4"));
@@ -47,9 +46,11 @@ public class MainActivity extends AppCompatActivity {
         lvitems.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                TodoItem item = (TodoItem) parent.getItemAtPosition(position);
+                deleteItem(item.getId());
                 todoItems.remove(position);
                 aTodoAdapter.notifyDataSetChanged();
-                deleteItem(position);
+
                 return false;
             }
         });
@@ -60,11 +61,13 @@ public class MainActivity extends AppCompatActivity {
                 TodoItem item = (TodoItem)parent.getItemAtPosition(position);
                 i.putExtra("Item",item.item);
                 i.putExtra("Position", position);
+                i.putExtra("Id", item.getId());
                 Log.i("Listit", "position" + position);
                 i.putExtra("Comments", item.comments);
                 i.putExtra("Priority", item.priority);
                 i.putExtra("Status", item.status);
                 i.putExtra("Deadline", item.date);
+                Log.i("ListIt", "send id:" + item.getId() + " item:" + item);
                 startActivityForResult(i, REQUEST_CODE);
             }
         });
@@ -99,17 +102,20 @@ public class MainActivity extends AppCompatActivity {
             String priority = data.getStringExtra("Priority");
             String status = data.getStringExtra("Status");
 
+
             if (requestCode == REQUEST_CODE) {
                 int pos = data.getIntExtra("Position", 0);
+                Long id = data.getLongExtra("Id", 0);
                 TodoItem current = todoItems.get(pos);
                 current.item = itemtext;
                 Log.d("Lisit", "item" + current.item + comments + priority + status + deadline);
+                Log.i("ListIt", "receive id:" + id + " item:" + itemtext);
                 current.comments = comments;
                 current.priority = priority;
                 current.status = status;
                 current.date = deadline;
                 aTodoAdapter.notifyDataSetChanged();
-                modifyItem(pos, itemtext, comments, deadline, priority, status);
+                modifyItem(id, itemtext, comments, deadline, priority, status);
             }
             if (requestCode == REQUEST_CODE_NEW) {
 
@@ -144,13 +150,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void deleteItem(int position) {
-        TodoItem item = TodoItem.findById(TodoItem.class, position);
-        item.delete();
+    private void deleteItem(Long id) {
+        TodoItem cur = TodoItem.findById(TodoItem.class, id);
+        cur.delete();
     }
 
-    private void modifyItem(int pos, String item, String comment, String deadline, String prioirty, String status) {
-        TodoItem cur = TodoItem.findById(TodoItem.class,pos+1);
+    private void modifyItem(Long id, String item, String comment, String deadline, String prioirty, String status) {
+        Log.i("ListIt", "modify id:" + id + " item:" + item);
+        TodoItem cur = TodoItem.findById(TodoItem.class, id);
         cur.item = item;
         cur.comments = comment;
         cur.priority = prioirty;

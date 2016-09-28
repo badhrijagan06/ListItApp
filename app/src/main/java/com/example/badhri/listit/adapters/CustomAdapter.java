@@ -51,7 +51,7 @@ public class CustomAdapter extends ArrayAdapter<TodoItem> {
 
         Calendar target = Calendar.getInstance();
         String[] parts = todoItem.date.split("-");
-        target.set(Integer.parseInt(parts[0]),Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+        target.set(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]) - 1, Integer.parseInt(parts[2]));
         long msDiff = target.getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
         long daysDiff = TimeUnit.MILLISECONDS.toDays(msDiff);
 
